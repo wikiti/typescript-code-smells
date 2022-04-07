@@ -1,21 +1,23 @@
+import { type } from "os";
+
 function enumKeys<O extends object, K extends keyof O = keyof O>(obj: O): K[] {
   return Object.keys(obj).filter((k) => Number.isNaN(+k)) as K[];
 }
 
 type PlayerSymbol = "X" | "O" | " ";
 
-enum Position {
-  TopLeft,
-  TopCenter,
-  TopRight,
+export enum Position {
+  TopLeft = "TopLeft",
+  TopCenter = "TopCenter",
+  TopRight = "TopRight",
 
-  MiddleLeft,
-  MiddleCenter,
-  MiddleRight,
+  MiddleLeft = "MiddleLeft",
+  MiddleCenter = "MiddleCenter",
+  MiddleRight = "MiddleRight",
 
-  BottomLeft,
-  BottomCenter,
-  BottomRight,
+  BottomLeft = "BottomLeft",
+  BottomCenter = "BottomCenter",
+  BottomRight = "BottomRight",
 }
 
 export class Game {
@@ -109,16 +111,12 @@ class Board {
   private _plays: Tile[] = [];
 
   constructor() {
-    for (const position in enumKeys(Position)) {
+    for (const position in Position) {
       const tile: Tile = {
-        Position: Position[position] as unknown as Position,
+        Position: position as any as Position,
         Symbol: " ",
       };
       this._plays.push(tile);
-    }
-
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {}
     }
   }
 
