@@ -26,30 +26,53 @@ export class Game {
 
   public Play(symbol: PlayerSymbol, position: Position): void {
     //if first move
-    if (this._lastSymbol == " ") {
-      //if player is X
-      if (symbol == "O") {
-        throw new Error("Invalid first player");
-      }
-    }
-    //if not first move but player repeated
-    else if (symbol == this._lastSymbol) {
-      throw new Error("Invalid next player");
-    }
-    //if not first move but play on an already played tile
-    else if (this._board.TileAt(position).Symbol != " ") {
-      throw new Error("Invalid position");
-    }
+    this.validate(symbol, position);
+
+
+    // if (this._lastSymbol == " ") {
+    //     //if player is X
+    //     if (symbol == "O") {
+    //       throw new Error("Invalid first player");
+    //     }
+    //   }
+    //   //if not first move but player repeated
+    //   else if (symbol == this._lastSymbol) {
+    //     throw new Error("Invalid next player");
+    //   }
+    //   //if not first move but play on an already played tile
+    //   else if (this._board.TileAt(position).Symbol != " ") {
+    //     throw new Error("Invalid position");
+    //   }
+
 
     // update game state
     this._lastSymbol = symbol;
     this._board.AddTileAt(symbol, position);
   }
 
+    private validate(symbol: string, position: Position) {
+        if (this._lastSymbol == " ") {
+            //if player is X
+            if (symbol == "O") {
+                throw new Error("Invalid first player");
+            }
+        }
+
+        //if not first move but player repeated
+        else if (symbol == this._lastSymbol) {
+            throw new Error("Invalid next player");
+        }
+
+        //if not first move but play on an already played tile
+        else if (this._board.TileAt(position).Symbol != " ") {
+            throw new Error("Invalid position");
+        }
+    }
+
   public Winner(): PlayerSymbol {
     //if the positions in first row are taken
     if (
-      this._board.TileAt(Position.TopLeft)!.Symbol != " " &&
+      this._board.isPlayerAt(" ", Position.TopLeft) &&
       this._board.TileAt(Position.TopCenter)!.Symbol != " " &&
       this._board.TileAt(Position.TopRight)!.Symbol != " "
     ) {
@@ -102,22 +125,29 @@ export class Game {
   }
 }
 
-interface Tile {
-  Position: Position;
-  Symbol: PlayerSymbol;
-}
+// interface Tile {
+//   Position: Position;
+//   Symbol: PlayerSymbol;
+// }
 
 class Board {
-  private _plays: Tile[] = [];
+  private _plays: Record<Position, PlayerSymbol>
 
   constructor() {
+      this._plays = {};
     for (const position in Position) {
-      const tile: Tile = {
-        Position: position as any as Position,
-        Symbol: " ",
-      };
-      this._plays.push(tile);
+      
+      this._plays[position as any as Position] = 
+      " "
+    ;
     }
+  }
+
+
+
+  public isPlayerAt(symbol: PlayerSymbol, position: Position): boolean {
+    return this.TileAt(position)!.Symbol == symbol;
+    return this._plays [position] == symbol;
   }
 
   public TileAt(position: Position): Tile {
